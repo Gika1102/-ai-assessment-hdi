@@ -1,4 +1,4 @@
-const SUBMIT_ENDPOINT = "assesment-ai-hdi.dihsantos2502.workers.dev/submit";
+const SUBMIT_ENDPOINT = "https://assesment-ai-hdi.dihsantos2502.workers.dev/submit";
 const STORAGE_KEY = "hdi_feedback_draft_v1";
 const PENDING_KEY = "hdi_feedback_pending_v1";
 const form = document.getElementById("feedbackForm") || document.querySelector("form");
