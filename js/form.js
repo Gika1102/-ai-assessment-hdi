@@ -119,8 +119,16 @@ if (form) {
     setStatus("Enviando seu feedback...");
     try {
       if (SUBMIT_ENDPOINT.includes("SEU-WORKER")) throw new Error("Endpoint ainda não configurado.");
-      const result = await fetch(SUBMIT_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(response) });
-      if (!result.ok) throw new Error(`HTTP ${result.status}`);
+      const result = await fetch(SUBMIT_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(response)
+      });
+      const payload = await result.json().catch(() => ({}));
+
+      if (!result.ok) {
+        throw new Error(payload.error || `HTTP ${result.status}`);
+      }
       form.reset(); currentStep = 1; showStep(1); clearLocalBackup(); if (characterCount) characterCount.textContent = "0 / 2000"; setStatus("Feedback enviado. Obrigado por participar da feira!", "success");
     } catch (error) { console.error(error); setStatus("Não foi possível enviar agora. Sua resposta ficou salva neste aparelho; tente novamente quando a conexão estiver estável.", "error"); }
     finally { isSubmitting = false; if (submitButton) submitButton.disabled = false; if (nextButton) nextButton.disabled = false; if (backButton) backButton.disabled = false; }
