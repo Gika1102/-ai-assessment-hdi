@@ -1,0 +1,65 @@
+/* ========================================================
+   PALETA OFICIAL KYNDRYL & TOKENS GLOBAIS
+======================================================== */
+:root {
+  --kyn-red: #FF462D;
+  --kyn-red-light: #FEECEB;
+  --kyn-red-dark: #BB4A4A;
+  
+  --kyn-teal: #29707A;
+  --kyn-teal-deep: #1B4D5C;
+  --kyn-aqua: #4AC5BB;
+  --kyn-aqua-light: #E4F4F1;
+  
+  --kyn-green: #187E3F;
+  --kyn-green-bright: #4CDD84;
+  --kyn-green-light: #E8F8F0;
+  
+  --kyn-amber: #F4D25A;
+  --kyn-amber-dark: #B59525;
+  --kyn-amber-light: #FEF9E7;
+  
+  --kyn-purple: #B687AC;
+  --kyn-purple-deep: #7B4F71;
+  
+  --kyn-dark: #1C2325;
+  --kyn-charcoal: #293537;
+  --kyn-gray-dark: #565049;
+  --kyn-gray-medium: #7F898A;
+  --kyn-sand-gray: #9E9287;
+  --kyn-sand-bg: #F4F3F0;
+  --kyn-border: #E0DDD7;
+  
+  --bg-white: #ffffff;
+  --sidebar-width: 250px;
+  --font-family: Arial, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* ========================================================
+   TRANSIÇÕES DE PÁGINA
+======================================================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+body {
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+body.fade-out {
+  animation: fadeOut 0.4s ease-in-out;
+}

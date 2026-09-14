@@ -1,80 +1,115 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#111827" />
-  <title>Formulário Interativo</title>
-  <link rel="stylesheet" href="../css/form.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#17252a">
+  <title>AI Maturity Assessment | Kyndryl</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/form.css">
 </head>
-<body>
-  <main class="shell">
-    <section class="hero">
-      <span class="eyebrow">FEIRA • DEMO</span>
-      <h1>Conte um pouco sobre você</h1>
-      <p>Responda rapidinho. Leva menos de 1 minuto.</p>
+<body class="form-page">
+  <main class="form-shell">
+    <a class="form-back-link" href="../index.html">&larr; Voltar ao portal</a>
+    <section class="form-intro" id="introPanel" aria-labelledby="form-title">
+      <div class="intro-brand"><span class="form-eyebrow">Kyndryl</span><strong>ASSESSMENT DE PRONTIDÃO PARA IA AGÊNTICA</strong></div>
+      <div class="form-brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+      <h1 id="form-title">Sua empresa está pronta para ser uma organização agêntica?</h1>
+      <button type="button" id="startButton" class="start-button">Começar <span aria-hidden="true">&rarr;</span></button>
     </section>
-
-    <section class="progress-wrap" aria-label="Progresso">
-      <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
-      <span id="stepLabel">Etapa 1 de 3</span>
+    <section class="progress-area" id="progressArea" aria-label="Progresso do formulário" hidden>
+      <div class="progress-track"><span id="progressBar"></span></div>
+      <span id="stepLabel">Etapa 1 de 8</span>
     </section>
-
-    <form id="feedbackForm" novalidate>
-      <div class="step active" data-step="1">
-        <div class="step-number">01</div>
-        <h2>Quem é você?</h2>
-        <label>Nome <span>*</span>
-          <input id="name" name="name" type="text" autocomplete="name" placeholder="Seu nome" required />
-        </label>
-        <label>E-mail <span>*</span>
-          <input id="email" name="email" type="email" autocomplete="email" placeholder="voce@empresa.com" required />
-        </label>
-        <label>Empresa
-          <input id="company" name="company" type="text" autocomplete="organization" placeholder="Sua empresa" />
-        </label>
-      </div>
-
-      <div class="step" data-step="2">
-        <div class="step-number">02</div>
-        <h2>Sobre a experiência</h2>
-        <label>Qual tema mais te interessa? <span>*</span>
-          <select id="interest" name="interest" required>
-            <option value="">Selecione</option>
-            <option>IA e automação</option>
-            <option>Dados e analytics</option>
-            <option>Cloud</option>
-            <option>Experiência do cliente</option>
-            <option>Outro</option>
-          </select>
-        </label>
-        <label>Quanto você já conhece sobre o assunto? <span>*</span>
-          <div class="choice-grid">
-            <label class="choice"><input type="radio" name="level" value="Iniciante" required /><span>Iniciante</span></label>
-            <label class="choice"><input type="radio" name="level" value="Intermediário" /><span>Intermediário</span></label>
-            <label class="choice"><input type="radio" name="level" value="Avançado" /><span>Avançado</span></label>
-          </div>
-        </label>
-      </div>
-
-      <div class="step" data-step="3">
-        <div class="step-number">03</div>
-        <h2>Última pergunta ✨</h2>
-        <label>O que você gostaria de ver ou experimentar?
-          <textarea id="comment" name="comment" rows="5" placeholder="Escreva aqui..."></textarea>
-        </label>
-        <div class="privacy-note">
-          <strong>Pronto para enviar?</strong>
-          <span>Seu envio será registrado para análise da demonstração.</span>
+    <form id="feedbackForm" novalidate hidden>
+      <fieldset class="form-step is-active" data-step="1">
+        <legend>Sobre você</legend>
+        <p class="step-hint">Esses dados ajudam a contextualizar o resultado.</p>
+        <div class="field-group">
+          <label class="field-label" for="name">Nome <span aria-hidden="true">*</span></label>
+          <input id="name" name="name" type="text" autocomplete="name" maxlength="120" required placeholder="Como podemos chamar você?">
+          <span class="field-error" data-error-for="name"></span>
         </div>
+        <div class="field-group">
+          <label class="field-label" for="company">Empresa <span class="optional">opcional</span></label>
+          <input id="company" name="company" type="text" autocomplete="organization" maxlength="180" placeholder="Nome da empresa">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="role">Cargo <span class="optional">opcional</span></label>
+          <input id="role" name="role" type="text" autocomplete="organization-title" maxlength="120" placeholder="Seu cargo ou função">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="email">E-mail <span aria-hidden="true">*</span></label>
+          <input id="email" name="email" type="email" autocomplete="email" maxlength="180" required placeholder="voce@empresa.com">
+          <span class="field-error" data-error-for="email"></span>
+        </div>
+      </fieldset>
+      <fieldset class="form-step" data-step="2" hidden>
+        <legend>1. Liderança e visão</legend>
+        <p class="step-hint">A liderança definiu e comunicou suficientemente uma visão clara para o uso de IA, com resultados esperados, patrocínio executivo e um ambiente seguro para experimentar e redesenhar o trabalho?</p>
+        <div class="score-list" role="radiogroup" aria-label="Liderança e visão">
+          <label class="score-card"><input type="radio" name="leadershipVision" value="0" required><strong>0</strong><span>Ainda não discutido ou desconhecido</span></label>
+          <label class="score-card"><input type="radio" name="leadershipVision" value="1"><strong>1</strong><span>Existe intenção, mas sem owner ou plano formal</span></label>
+          <label class="score-card"><input type="radio" name="leadershipVision" value="2"><strong>2</strong><span>Existem iniciativas ou pilotos isolados</span></label>
+          <label class="score-card"><input type="radio" name="leadershipVision" value="3"><strong>3</strong><span>Prática definida e implementada em áreas prioritárias</span></label>
+          <label class="score-card"><input type="radio" name="leadershipVision" value="4"><strong>4</strong><span>Padronizada, mensurada e aplicada em escala</span></label>
+        </div>
+        <span class="field-error" data-error-for="leadershipVision"></span>
+      </fieldset>
+      <fieldset class="form-step" data-step="3" hidden>
+        <legend>2. Conhecimento do trabalho</legend>
+        <p class="step-hint">Conhecemos suficientemente como o trabalho acontece hoje para decidir o que deve ser eliminado, permanecer humano ou ser compartilhado com Agentes?</p>
+        <p class="question-note">Considere os dados consumidos, papéis envolvidos, decisões, entregas, métricas e ineficiências.</p>
+        <div class="score-list" role="radiogroup" aria-label="Conhecimento do trabalho">
+          <label class="score-card"><input type="radio" name="workKnowledge" value="0" required><strong>0</strong><span>Ainda não discutido ou desconhecido</span></label><label class="score-card"><input type="radio" name="workKnowledge" value="1"><strong>1</strong><span>Existe intenção, mas sem owner ou plano formal</span></label><label class="score-card"><input type="radio" name="workKnowledge" value="2"><strong>2</strong><span>Existem iniciativas ou pilotos isolados</span></label><label class="score-card"><input type="radio" name="workKnowledge" value="3"><strong>3</strong><span>Prática definida e implementada em áreas prioritárias</span></label><label class="score-card"><input type="radio" name="workKnowledge" value="4"><strong>4</strong><span>Padronizada, mensurada e aplicada em escala</span></label>
+        </div><span class="field-error" data-error-for="workKnowledge"></span>
+      </fieldset>
+      <fieldset class="form-step" data-step="4" hidden>
+        <legend>3. Portfólio e roadmap</legend>
+        <p class="step-hint">Temos visibilidade das iniciativas de IA e um roadmap priorizado para evoluir de experimentos a agentes em produção, integrados, mensurados, monitorados e escaláveis?</p>
+        <p class="question-note">Considere iniciativas em andamento, tecnologias em uso, decisões de arquitetura e critérios de priorização.</p>
+        <div class="score-list" role="radiogroup" aria-label="Portfólio e roadmap">
+          <label class="score-card"><input type="radio" name="portfolioRoadmap" value="0" required><strong>0</strong><span>Ainda não discutido ou desconhecido</span></label><label class="score-card"><input type="radio" name="portfolioRoadmap" value="1"><strong>1</strong><span>Existe intenção, mas sem owner ou plano formal</span></label><label class="score-card"><input type="radio" name="portfolioRoadmap" value="2"><strong>2</strong><span>Existem iniciativas ou pilotos isolados</span></label><label class="score-card"><input type="radio" name="portfolioRoadmap" value="3"><strong>3</strong><span>Prática definida e implementada em áreas prioritárias</span></label><label class="score-card"><input type="radio" name="portfolioRoadmap" value="4"><strong>4</strong><span>Padronizada, mensurada e aplicada em escala</span></label>
+        </div><span class="field-error" data-error-for="portfolioRoadmap"></span>
+      </fieldset>
+      <fieldset class="form-step" data-step="5" hidden>
+        <legend>4. Tecnologia, dados e segurança</legend>
+        <p class="step-hint">Nossos dados, sistemas, integrações e controles estão prontos para que Agentes acessem informações e executem ações com segurança?</p>
+        <div class="score-list" role="radiogroup" aria-label="Tecnologia, dados e segurança">
+          <label class="score-card"><input type="radio" name="technologySecurity" value="0" required><strong>0</strong><span>Ainda não discutido ou desconhecido</span></label><label class="score-card"><input type="radio" name="technologySecurity" value="1"><strong>1</strong><span>Existe intenção, mas sem owner ou plano formal</span></label><label class="score-card"><input type="radio" name="technologySecurity" value="2"><strong>2</strong><span>Existem iniciativas ou pilotos isolados</span></label><label class="score-card"><input type="radio" name="technologySecurity" value="3"><strong>3</strong><span>Prática definida e implementada em áreas prioritárias</span></label><label class="score-card"><input type="radio" name="technologySecurity" value="4"><strong>4</strong><span>Padronizada, mensurada e aplicada em escala</span></label>
+        </div><span class="field-error" data-error-for="technologySecurity"></span>
+      </fieldset>
+      <fieldset class="form-step" data-step="6" hidden>
+        <legend>5. Responsabilidades e accountability</legend>
+        <p class="step-hint">Está claro quem prioriza, aprova, constrói, implementa, governa, opera e responde pelos agentes de IA e por seus resultados?</p>
+        <p class="question-note">Considere a divisão de responsabilidades entre negócio, TI e áreas de governança.</p>
+        <div class="score-list" role="radiogroup" aria-label="Responsabilidades e accountability">
+          <label class="score-card"><input type="radio" name="accountability" value="0" required><strong>0</strong><span>Ainda não discutido ou desconhecido</span></label><label class="score-card"><input type="radio" name="accountability" value="1"><strong>1</strong><span>Existe intenção, mas sem owner ou plano formal</span></label><label class="score-card"><input type="radio" name="accountability" value="2"><strong>2</strong><span>Existem iniciativas ou pilotos isolados</span></label><label class="score-card"><input type="radio" name="accountability" value="3"><strong>3</strong><span>Prática definida e implementada em áreas prioritárias</span></label><label class="score-card"><input type="radio" name="accountability" value="4"><strong>4</strong><span>Padronizada, mensurada e aplicada em escala</span></label>
+        </div><span class="field-error" data-error-for="accountability"></span>
+      </fieldset>
+      <fieldset class="form-step" data-step="7" hidden>
+        <legend>6. Mudança e aprendizagem</legend>
+        <p class="step-hint">Temos uma estratégia estruturada, responsáveis e recursos para envolver as pessoas, desenvolver competências, apoiar a adoção, acompanhar impactos e aprender continuamente?</p>
+        <div class="score-list" role="radiogroup" aria-label="Mudança e aprendizagem">
+          <label class="score-card"><input type="radio" name="changeLearning" value="0" required><strong>0</strong><span>Ainda não discutido ou desconhecido</span></label><label class="score-card"><input type="radio" name="changeLearning" value="1"><strong>1</strong><span>Existe intenção, mas sem owner ou plano formal</span></label><label class="score-card"><input type="radio" name="changeLearning" value="2"><strong>2</strong><span>Existem iniciativas ou pilotos isolados</span></label><label class="score-card"><input type="radio" name="changeLearning" value="3"><strong>3</strong><span>Prática definida e implementada em áreas prioritárias</span></label><label class="score-card"><input type="radio" name="changeLearning" value="4"><strong>4</strong><span>Padronizada, mensurada e aplicada em escala</span></label>
+        </div><span class="field-error" data-error-for="changeLearning"></span>
+      </fieldset>
+      <fieldset class="form-step" data-step="8" hidden>
+        <legend>Seu resultado preliminar</legend>
+        <p class="step-hint">Esta média é uma indicação inicial para orientar a conversa, não um diagnóstico definitivo.</p>
+        <div class="score-result"><strong id="scorePreview">0,0</strong><span>de 4,0</span></div>
+        <label class="field-label" for="comment">Algum contexto que gostaria de compartilhar? <span class="optional">opcional</span></label>
+        <textarea id="comment" name="comment" rows="5" maxlength="2000" placeholder="Uma iniciativa, desafio ou próximo passo..."></textarea>
+        <span class="character-count" id="characterCount">0 / 2000</span>
+        <label class="consent-line"><input id="consent" name="consent" type="checkbox" required><span>Autorizo o uso deste feedback para análise da demonstração. <span aria-hidden="true">*</span></span></label>
+        <span class="field-error" data-error-for="consent"></span>
+      </fieldset>
+      <div class="form-actions">
+        <button type="button" id="backButton" class="button button-secondary">Voltar</button>
+        <button type="button" id="nextButton" class="button button-primary">Continuar <span aria-hidden="true">&rarr;</span></button>
+        <button type="submit" id="submitButton" class="button button-primary" hidden>Enviar avaliação <span aria-hidden="true">&rarr;</span></button>
       </div>
-
-      <div class="actions">
-        <button type="button" id="backBtn" class="btn secondary" hidden>Voltar</button>
-        <button type="button" id="nextBtn" class="btn primary">Continuar</button>
-        <button type="submit" id="submitBtn" class="btn primary" hidden>Enviar resposta</button>
-      </div>
-      <p id="statusMessage" class="status" role="status" aria-live="polite"></p>
+      <p id="statusMessage" class="status-message" role="status" aria-live="polite"></p>
     </form>
   </main>
   <script src="../js/form.js"></script>
