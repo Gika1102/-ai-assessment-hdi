@@ -1,23 +1,24 @@
-# HDI PoC — Saúde Ocupacional
+# Formulário de Feedback
 
-Uma demonstração 100% estática de um agente fictício para acompanhamento de exames ocupacionais. Não usa servidor, API, chaves, banco de dados ou serviços de IA externos.
+Este projeto contém uma página exclusiva de formulário para coleta de feedback/avaliação.
 
-## Como funciona
+## Estrutura
 
-- O chat usa regras determinísticas em JavaScript.
-- O botão de pessoa no chat troca o perfil demonstrado: Funcionário, Gerente, RH ou TI.
-- As respostas e perguntas sugeridas mudam conforme o perfil escolhido.
-- Todos os dados são fictícios e ficam em `js/fake-agent-data.js`.
-- `backend/employees.xlsx` é a referência editável da massa de demonstração; ao alterá-la, replique os dados no arquivo JavaScript estático.
+- `Forms/forms.html` — página principal do formulário
+- `css/form.css` — estilos da interface
+- `js/form.js` — lógica do formulário, navegação por etapas, validação e envio
+- `backend/worker.js` — endpoint de processamento do envio do formulário
 
-## Abrir localmente
+## Objetivo
 
-Abra `command-center.html` no navegador. O chat funciona sem iniciar nenhum processo local.
+A aplicação foi desenvolvida como uma página autônoma de formulário para coleta de respostas.
 
-## Publicar gratuitamente
+## Como abrir
 
-1. Suba o repositório no GitHub.
-2. Em **Settings → Pages**, escolha **Deploy from a branch** e selecione a branch `main` e a pasta `/ (root)`.
-3. Abra `https://<organizacao-ou-usuario>.github.io/<repositorio>/command-center.html`.
+1. Abra o arquivo `Forms/forms.html` em um navegador.
+2. Se necessário, sirva a pasta localmente com um servidor simples para evitar limitações de navegador.
 
-Cada push para a branch configurada atualiza a demonstração publicada. Como não existe backend, não há cold start nem dependência de internet além do acesso ao site.
+## Observações
+
+- O fluxo é totalmente concentrado na experiência do formulário.
+- Esta é uma aplicação de página única para coleta de respostas.

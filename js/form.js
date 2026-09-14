@@ -51,7 +51,7 @@ function setStatus(message, type = "") { statusMessage.textContent = message; st
 function showStep(step) {
   currentStep = Math.min(Math.max(step, 1), steps.length);
   steps.forEach((element, index) => { const active = index + 1 === currentStep; element.hidden = !active; element.classList.toggle("is-active", active); });
-  backButton.textContent = currentStep === 1 ? "Voltar ao portal" : "Voltar";
+  backButton.textContent = "Voltar";
   nextButton.hidden = currentStep === steps.length; submitButton.hidden = currentStep !== steps.length;
   progressBar.style.width = `${(currentStep / steps.length) * 100}%`; stepLabel.textContent = `Etapa ${currentStep} de ${steps.length}`; updateScorePreview(); saveDraft();
 }
@@ -80,8 +80,8 @@ nextButton.addEventListener("click", () => { setStatus(); advanceIfValid(); });
 startButton.addEventListener("click", startAssessment);
 backButton.addEventListener("click", () => {
   setStatus();
-  if (currentStep === 1) window.location.href = "../index.html";
-  else showStep(currentStep - 1);
+  if (currentStep === 1) return;
+  showStep(currentStep - 1);
 });
 form.addEventListener("input", () => { saveDraft(); characterCount.textContent = `${form.elements.comment.value.length} / 2000`; });
 form.addEventListener("change", event => {
