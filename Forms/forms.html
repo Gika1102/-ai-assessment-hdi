@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#111827" />
   <title>Formulário Interativo</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="../css/form.css" />
 </head>
 <body>
   <main class="shell">
@@ -20,7 +20,7 @@
       <span id="stepLabel">Etapa 1 de 3</span>
     </section>
 
-    <form id="fairForm" novalidate>
+    <form id="feedbackForm" novalidate>
       <div class="step active" data-step="1">
         <div class="step-number">01</div>
         <h2>Quem é você?</h2>
@@ -74,9 +74,9 @@
         <button type="button" id="nextBtn" class="btn primary">Continuar</button>
         <button type="submit" id="submitBtn" class="btn primary" hidden>Enviar resposta</button>
       </div>
-      <p id="status" class="status" role="status" aria-live="polite"></p>
+      <p id="statusMessage" class="status" role="status" aria-live="polite"></p>
     </form>
   </main>
-  <script src="app.js"></script>
+  <script src="../js/form.js"></script>
 </body>
 </html>
