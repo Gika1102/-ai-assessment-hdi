@@ -1,3 +1,5 @@
+import { decryptObject, encryptObject, normalizeEncryptedData } from "./crypto.js";
+
 const SUBMIT_ENDPOINT = "https://assesment-ai-hdi.dihsantos2502.workers.dev/submit";
 const STORAGE_KEY = "hdi_feedback_draft_v1";
 const PENDING_KEY = "hdi_feedback_pending_v1";
@@ -13,9 +15,26 @@ const statusMessage = document.getElementById("statusMessage") || document.getEl
 const progressBar = document.getElementById("progressBar");
 const stepLabel = document.getElementById("stepLabel");
 const characterCount = document.getElementById("characterCount");
-const scorePreview = document.getElementById("scorePreview");
-const scoreNames = ["leadershipVision", "workKnowledge", "portfolioRoadmap", "technologySecurity", "accountability", "changeLearning"];
 let currentStep = Number(localStorage.getItem(`${STORAGE_KEY}_step`) || 1);
+let runtimePassphrase = null;
+
+function getPassphrase() {
+  if (runtimePassphrase) return runtimePassphrase;
+
+  const configured = window.__ASSESSMENT_PASSPHRASE__;
+  if (configured && String(configured).trim()) {
+    runtimePassphrase = String(configured).trim();
+    return runtimePassphrase;
+  }
+
+  const entered = window.prompt("Informe a frase secreta para criptografar e salvar este formulário:", "");
+  if (!entered || !String(entered).trim()) {
+    throw new Error("Frase secreta obrigatória para salvar os dados com criptografia.");
+  }
+
+  runtimePassphrase = String(entered).trim();
+  return runtimePassphrase;
+}
 let isSubmitting = false;
 let hasStarted = false;
 
@@ -36,15 +55,34 @@ function startAssessment() {
   form.querySelector(":invalid")?.focus();
 }
 
-function readDraft() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); } catch { return {}; } }
-function saveDraft() {
-  const values = Object.fromEntries(new FormData(form).entries());
-  values.consent = form.elements.consent.checked;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
-  localStorage.setItem(`${STORAGE_KEY}_step`, String(currentStep));
+async function readDraft() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return {};
+
+    const parsed = JSON.parse(raw);
+    const encrypted = normalizeEncryptedData(parsed);
+    if (!encrypted) return parsed;
+
+    return await decryptObject(encrypted, getPassphrase());
+  } catch {
+    return {};
+  }
 }
-function fillDraft() {
-  const draft = readDraft();
+async function saveDraft() {
+  try {
+    const values = Object.fromEntries(new FormData(form).entries());
+    values.consent = form.elements.consent.checked;
+    const encrypted = await encryptObject(values, getPassphrase());
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(encrypted));
+    localStorage.setItem(`${STORAGE_KEY}_step`, String(currentStep));
+  } catch (error) {
+    console.error(error);
+    setStatus("Frase secreta não informada. Defina a chave antes de salvar os dados criptografados.", "error");
+  }
+}
+async function fillDraft() {
+  const draft = await readDraft();
   Object.entries(draft).forEach(([name, value]) => {
     const field = form.elements[name];
     if (!field) return;
@@ -63,12 +101,7 @@ function showStep(step) {
   if (submitButton) submitButton.hidden = currentStep !== steps.length;
   if (progressBar) progressBar.style.width = `${(currentStep / steps.length) * 100}%`;
   if (stepLabel) stepLabel.textContent = `Etapa ${currentStep} de ${steps.length}`;
-  updateScorePreview(); saveDraft();
-}
-function updateScorePreview() {
-  if (!form) return;
-  const scores = scoreNames.map(name => Number(form.elements[name]?.value)).filter(Number.isFinite);
-  if (scorePreview) scorePreview.textContent = (scores.length ? scores.reduce((sum, score) => sum + score, 0) / scores.length : 0).toFixed(1).replace(".", ",");
+  saveDraft();
 }
 function validateStep() {
   if (!form || !steps.length) return true;
@@ -82,7 +115,15 @@ function validateStep() {
   if (!isValid) activeStep.querySelector(":invalid")?.focus(); return isValid;
 }
 function makeId() { return crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`; }
-function savePending(response) { localStorage.setItem(PENDING_KEY, JSON.stringify(response)); }
+async function savePending(response) {
+  try {
+    const encrypted = await encryptObject(response, getPassphrase());
+    localStorage.setItem(PENDING_KEY, JSON.stringify(encrypted));
+  } catch (error) {
+    console.error(error);
+    throw new Error("Não foi possível salvar os dados criptografados sem a chave secreta.");
+  }
+}
 function clearLocalBackup() { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(`${STORAGE_KEY}_step`); localStorage.removeItem(PENDING_KEY); }
 
 function advanceIfValid() {
@@ -112,7 +153,7 @@ if (form) {
   form.addEventListener("submit", async event => {
     event.preventDefault(); if (isSubmitting || !validateStep()) return;
     const formData = Object.fromEntries(new FormData(form).entries()); delete formData.consent;
-    const response = { id: makeId(), timestamp: new Date().toISOString(), answers: formData }; savePending(response); isSubmitting = true;
+    const response = { id: makeId(), timestamp: new Date().toISOString(), answers: formData }; await savePending(response); isSubmitting = true;
     if (submitButton) submitButton.disabled = true;
     if (nextButton) nextButton.disabled = true;
     if (backButton) backButton.disabled = true;
@@ -129,15 +170,14 @@ if (form) {
       if (!result.ok) {
         throw new Error(payload.error || `HTTP ${result.status}`);
       }
-      form.reset(); currentStep = 1; showStep(1); clearLocalBackup(); if (characterCount) characterCount.textContent = "0 / 2000"; setStatus("Feedback enviado. Obrigado por participar da feira!", "success");
+      form.reset(); currentStep = 1; showStep(1); clearLocalBackup(); if (characterCount) characterCount.textContent = "0 / 2000"; setStatus("Sua avaliação foi enviada com sucesso. O time da Kyndryl vai entrar em contato.", "success");
     } catch (error) { console.error(error); setStatus("Não foi possível enviar agora. Sua resposta ficou salva neste aparelho; tente novamente quando a conexão estiver estável.", "error"); }
     finally { isSubmitting = false; if (submitButton) submitButton.disabled = false; if (nextButton) nextButton.disabled = false; if (backButton) backButton.disabled = false; }
   });
 }
-const savedDraft = readDraft();
+const savedDraft = await readDraft();
 if (form) {
-  fillDraft();
+  await fillDraft();
   if (Object.keys(savedDraft).some(key => key !== "consent" && savedDraft[key])) startAssessment();
   if (form.elements.comment && characterCount) characterCount.textContent = `${form.elements.comment.value.length} / 2000`;
 }
-updateScorePreview();

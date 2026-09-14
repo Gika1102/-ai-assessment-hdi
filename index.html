@@ -94,9 +94,8 @@
         </div><span class="field-error" data-error-for="changeLearning"></span>
       </fieldset>
       <fieldset class="form-step" data-step="8" hidden>
-        <legend>Seu resultado preliminar</legend>
-        <p class="step-hint">Esta média é uma indicação inicial para orientar a conversa, não um diagnóstico definitivo.</p>
-        <div class="score-result"><strong id="scorePreview">0,0</strong><span>de 4,0</span></div>
+        <legend>Contexto final</legend>
+        <p class="step-hint">Compartilhe qualquer contexto que ajude a conversa a ficar mais precisa.</p>
         <label class="field-label" for="comment">Algum contexto que gostaria de compartilhar? <span class="optional">opcional</span></label>
         <textarea id="comment" name="comment" rows="5" maxlength="2000" placeholder="Uma iniciativa, desafio ou próximo passo..."></textarea>
         <span class="character-count" id="characterCount">0 / 2000</span>
@@ -111,6 +110,6 @@
       <p id="statusMessage" class="status-message" role="status" aria-live="polite"></p>
     </form>
   </main>
-  <script src="js/form.js"></script>
+  <script type="module" src="js/form.js"></script>
 </body>
 </html>
