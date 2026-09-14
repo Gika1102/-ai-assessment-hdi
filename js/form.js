@@ -55,6 +55,41 @@ function startAssessment() {
   form.querySelector(":invalid")?.focus();
 }
 
+function getAllFormValues() {
+  const payload = {};
+  const visitedNames = new Set();
+
+  [...form.querySelectorAll("input, select, textarea")].forEach((field) => {
+    if (!field.name) return;
+
+    if (field.type === "radio") {
+      if (visitedNames.has(field.name)) return;
+      visitedNames.add(field.name);
+      const checked = form.querySelector(`input[name="${field.name}"]:checked`);
+      payload[field.name] = checked ? checked.value : null;
+      return;
+    }
+
+    if (field.type === "checkbox") {
+      payload[field.name] = field.checked;
+      return;
+    }
+
+    if (field.type === "file") {
+      payload[field.name] = field.value || null;
+      return;
+    }
+
+    payload[field.name] = field.value ?? "";
+  });
+
+  if (form.elements.consent) {
+    payload.consent = form.elements.consent.checked;
+  }
+
+  return payload;
+}
+
 async function readDraft() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -71,8 +106,7 @@ async function readDraft() {
 }
 async function saveDraft() {
   try {
-    const values = Object.fromEntries(new FormData(form).entries());
-    values.consent = form.elements.consent.checked;
+    const values = getAllFormValues();
     const encrypted = await encryptObject(values, getPassphrase());
     localStorage.setItem(STORAGE_KEY, JSON.stringify(encrypted));
     localStorage.setItem(`${STORAGE_KEY}_step`, String(currentStep));
@@ -152,7 +186,7 @@ if (form) {
   });
   form.addEventListener("submit", async event => {
     event.preventDefault(); if (isSubmitting || !validateStep()) return;
-    const formData = Object.fromEntries(new FormData(form).entries()); delete formData.consent;
+    const formData = getAllFormValues(); delete formData.consent;
     const response = { id: makeId(), timestamp: new Date().toISOString(), answers: formData }; await savePending(response); isSubmitting = true;
     if (submitButton) submitButton.disabled = true;
     if (nextButton) nextButton.disabled = true;
