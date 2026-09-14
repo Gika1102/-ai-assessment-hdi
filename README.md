@@ -4,7 +4,7 @@ Este projeto contém uma página exclusiva de formulário para coleta de feedbac
 
 ## Estrutura
 
-- `Forms/forms.html` — página principal do formulário
+- `index.html` — página principal do formulário
 - `css/form.css` — estilos da interface
 - `js/form.js` — lógica do formulário, navegação por etapas, validação e envio
 - `backend/worker.js` — endpoint de processamento do envio do formulário
