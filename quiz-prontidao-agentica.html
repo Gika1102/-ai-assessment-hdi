@@ -68,8 +68,7 @@
 	.tester-reset:hover, .tester-reset:focus-visible { color: var(--kyndryl); }
 	main { max-width: 760px; padding: 0 0 10px; }
 	.card { padding: 24px 28px; }
-	.page-layout { display: grid; grid-template-columns: 158px minmax(0, 760px); gap: 22px; align-items: start; width: min(100% - 48px, 940px); margin: 16px auto 10px; margin-left: calc(50% - 470px + 75px); }
-	.page-layout { flex: 1 0 auto; }
+	.page-layout { display: grid; grid-template-columns: 158px minmax(0, 760px); gap: 22px; align-items: start; width: auto; max-width: calc(100% - 75px); margin: 16px 0 10px 75px; flex: 1 0 auto; }
 	h1 { font-size: clamp(1.45rem, 3.5vw, 2rem); margin-bottom: 10px; }
 	.subtitle { margin-bottom: 18px; font-size: .92rem; }
 	.rule { margin-bottom: 14px; }
@@ -104,7 +103,7 @@
 		#result-content { column-gap: 14px; }
 		#result-content .score { font-size: 3rem; }
 	}
-	@media (max-width: 860px) { .page-layout { display: block; width: min(100% - 24px, 760px); margin-top: 12px; margin-left: auto; margin-right: auto; } .qr-aside { display: none; } }
+	@media (max-width: 860px) { .page-layout { display: block; width: auto; max-width: calc(100% - 75px); margin-top: 12px; margin-left: 75px; margin-right: 0; } .qr-aside { display: none; } }
 	@media (max-width: 620px) {
 		main { padding: 0 12px 10px; }
 		.card { padding: 20px 18px; }
