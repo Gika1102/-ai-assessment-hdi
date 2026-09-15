@@ -1,6 +1,7 @@
 const SUBMIT_ENDPOINT = "https://assesment-ai-hdi.dihsantos2502.workers.dev/submit";
 const STORAGE_KEY = "hdi_feedback_draft_v1";
 const PENDING_KEY = "hdi_feedback_pending_v1";
+const COMPLETED_KEY = "hdi_feedback_completed_v1";
 const form = document.getElementById("feedbackForm") || document.querySelector("form");
 const steps = [...document.querySelectorAll(".form-step, .step")];
 const introPanel = document.getElementById("introPanel") || document.querySelector(".hero");
@@ -13,9 +14,18 @@ const statusMessage = document.getElementById("statusMessage") || document.getEl
 const progressBar = document.getElementById("progressBar");
 const stepLabel = document.getElementById("stepLabel");
 const characterCount = document.getElementById("characterCount");
+const completionPanel = document.getElementById("completionPanel");
 let currentStep = Number(localStorage.getItem(`${STORAGE_KEY}_step`) || 1);
 let isSubmitting = false;
 let hasStarted = false;
+
+function showCompletion() {
+  document.body.classList.add("is-completed");
+  if (introPanel) introPanel.hidden = true;
+  if (progressArea) progressArea.hidden = true;
+  if (form) form.hidden = true;
+  if (completionPanel) completionPanel.hidden = false;
+}
 
 if (!form) {
   console.warn("Nenhum formulário encontrado na página.");
@@ -173,14 +183,21 @@ if (form) {
       if (!result.ok) {
         throw new Error(payload.error || `HTTP ${result.status}`);
       }
-      form.reset(); currentStep = 1; showStep(1); clearLocalBackup(); if (characterCount) characterCount.textContent = "0 / 2000"; setStatus("Sua avaliação foi salva com sucesso.", "success");
+      clearLocalBackup();
+      localStorage.setItem(COMPLETED_KEY, "true");
+      showCompletion();
+      setStatus("Sua avaliação foi salva com sucesso.", "success");
     } catch (error) { console.error(error); setStatus("Não foi possível enviar agora. Sua resposta ficou salva neste aparelho; tente novamente quando a conexão estiver estável.", "error"); }
     finally { isSubmitting = false; if (submitButton) submitButton.disabled = false; if (nextButton) nextButton.disabled = false; if (backButton) backButton.disabled = false; }
   });
 }
 const savedDraft = await readDraft();
 if (form) {
-  await fillDraft();
-  if (Object.keys(savedDraft).some(key => key !== "consent" && savedDraft[key])) startAssessment();
-  if (form.elements.comment && characterCount) characterCount.textContent = `${form.elements.comment.value.length} / 2000`;
+  if (localStorage.getItem(COMPLETED_KEY) === "true") {
+    showCompletion();
+  } else {
+    await fillDraft();
+    if (Object.keys(savedDraft).some(key => key !== "consent" && savedDraft[key])) startAssessment();
+    if (form.elements.comment && characterCount) characterCount.textContent = `${form.elements.comment.value.length} / 2000`;
+  }
 }
