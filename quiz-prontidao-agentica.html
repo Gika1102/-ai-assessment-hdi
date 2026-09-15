@@ -78,16 +78,15 @@
 	.btn-row { margin-block-start: 16px; }
 	.btn { min-height: 44px; padding: 10px 24px; }
 	.site-footer { margin-top: 12px; padding: 10px 0 0; border-block-start: 1px solid var(--border); font-size: .72rem; }
-	.site-footer { position: relative; min-height: 46px; margin: 0; overflow: hidden; padding: 10px clamp(18px, 4vw, 48px); border-block-start: 1px solid var(--border); background: var(--surface); isolation: isolate; }
+	.site-footer { position: relative; min-height: 46px; width: 100%; margin: 0; overflow: hidden; padding: 10px max(18px, calc((100% - 934px) / 2)); border-block-start: 1px solid var(--border); background: var(--surface); isolation: isolate; }
 	.site-footer::before,
 	.site-footer::after { position: absolute; z-index: -1; width: 38%; height: 90px; border: 1px solid rgba(0, 169, 157, .16); border-radius: 50%; content: ""; pointer-events: none; transform: rotate(7deg); }
 	.site-footer::before { top: 22px; left: 34%; box-shadow: 0 0 0 10px rgba(0, 169, 157, .035), 0 0 0 20px rgba(255, 70, 45, .03); }
 	.site-footer::after { right: -6%; bottom: 18px; border-color: rgba(255, 70, 45, .14); transform: rotate(-10deg); }
 	.site-footer > * { position: relative; z-index: 1; }
-	.page-layout { display: grid; grid-template-columns: 150px minmax(0, 760px); gap: 24px; align-items: start; width: min(100% - 40px, 934px); margin: 0 auto; }
-	.brand-photo { display: block; width: 150px; height: auto; margin: 12px 0 18px; object-fit: contain; }
-	.qr-aside { position: sticky; top: 24px; padding-top: 18px; color: var(--text-soft); text-align: center; }
-	.qr-aside img { display: block; width: 132px; height: 132px; margin: 0 auto 10px; border: 8px solid #fff; border-radius: 10px; box-shadow: var(--shadow); object-fit: contain; }
+	.brand-photo { display: block; width: 175px; height: auto; margin: 10px 0 14px; object-fit: contain; }
+	.qr-aside { position: sticky; top: 24px; padding-top: 18px; color: var(--text-soft); text-align: left; }
+	.qr-aside img { display: block; width: 158px; height: 158px; margin: 0 0 10px; border: 8px solid #fff; border-radius: 10px; box-shadow: var(--shadow); object-fit: contain; }
 	.qr-aside p { margin: 0; font-size: .72rem; line-height: 1.35; }
 	@media (max-width: 860px) { .page-layout { display: block; width: min(100% - 24px, 760px); } .qr-aside { display: none; } }
 	#screen-result .card { padding: 28px 36px; }
@@ -108,6 +107,9 @@
 		main { padding: 14px 12px 10px; }
 		.card { padding: 20px 18px; }
 		.site-footer { min-height: 42px; padding: 8px 12px; }
+		.brand-photo { width: 155px; }
+		.qr-aside { display: block; padding: 0 0 14px; text-align: left; }
+		.qr-aside img { width: 138px; height: 138px; }
 		.site-footer::before { left: 8%; width: 70%; }
 		.site-footer::after { right: -32%; width: 68%; }
 	}
