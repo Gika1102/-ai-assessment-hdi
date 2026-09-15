@@ -90,11 +90,11 @@
 	.qr-aside img { display: block; width: 158px; height: 158px; margin: 0 0 10px; border: 8px solid #fff; border-radius: 10px; box-shadow: var(--shadow); object-fit: contain; }
 	.qr-aside p { margin: 0; font-size: .72rem; line-height: 1.35; text-align: center; }
 	#screen-result .card { padding: 28px 36px; }
-	#result-content { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 24px; }
-	#result-content .badge { grid-column: 1; grid-row: 1; justify-self: start; margin: 0 0 10px; }
-	#result-content h2 { grid-column: 1; grid-row: 2; margin: 0; }
-	#result-content .score { grid-column: 2; grid-row: 1 / span 2; margin: 0; font-size: clamp(3rem, 7vw, 4.5rem); }
-	#result-content .diagnosis { grid-column: 1 / -1; margin: 18px 0 0; color: var(--text-soft); }
+	#result-content { display: flex; flex-direction: column; align-items: center; text-align: center; }
+	#result-content .score { order: 1; margin: 0 0 26px; font-size: clamp(4rem, 12vw, 5.5rem); }
+	#result-content .badge { order: 2; margin: 0 auto 14px; }
+	#result-content h2 { order: 3; margin: 0 0 18px; }
+	#result-content .diagnosis { order: 4; margin: 0; color: var(--text-soft); max-width: 560px; }
 	.completion-panel { margin-top: 26px; padding: 26px 0 4px; border-top: 1px solid var(--border); }
 	.completion-mark { width: 52px; height: 52px; margin-bottom: 14px; font-size: 1.6rem; }
 	.completion-panel h2 { font-size: clamp(1.35rem, 3vw, 1.8rem); }
@@ -116,7 +116,7 @@
 </head>
 <body>
 <header class="site-header"><img class="brand-photo" src="assets/brand-microsoft-kyndryl.png" alt="Kyndryl e Microsoft"></header>
-<div class="page-layout"><aside class="qr-aside" aria-label="Acesso ao Higspot"><img src="assets/qr-higspot.png" alt="QR Code para acessar o Higspot"><p>Recursos e Downloads Adicionais</p></aside><main>
+<div class="page-layout"><aside class="qr-aside" aria-label="Acesso ao Higspot"><img src="assets/qr-higspot.png" alt="QR Code para acessar o Higspot"><p>Acesse o Higspot<br>para saber mais.</p></aside><main>
 <section id="screen-welcome" class="screen active" aria-labelledby="welcome-title"><div class="card"><div class="rule"></div><h1 id="welcome-title">Sua empresa está pronta para ser uma organização agêntica?</h1><p class="subtitle">5 perguntas · 2 minutos · diagnóstico de prontidão agêntica</p><form id="lead-form" novalidate><div class="form-grid"><div class="field"><label for="f-nome">Nome <span class="req" aria-hidden="true">*</span></label><input type="text" id="f-nome" name="nome" autocomplete="name" required></div><div class="field"><label for="f-empresa">Empresa <span class="req" aria-hidden="true">*</span></label><input type="text" id="f-empresa" name="empresa" autocomplete="organization" required></div><div class="field"><label for="f-cargo">Cargo <span class="req" aria-hidden="true">*</span></label><input type="text" id="f-cargo" name="cargo" autocomplete="organization-title" required></div><div class="field"><label for="f-email">E-mail <span class="req" aria-hidden="true">*</span></label><input type="email" id="f-email" name="email" autocomplete="email" required></div></div><label class="optin" for="f-optin"><input type="checkbox" id="f-optin" name="optin" checked><span>Aceito receber o material de follow-up</span></label><p class="error-msg" id="form-error" role="alert"></p><div class="btn-row"><button type="submit" class="btn btn-primary">Começar</button></div></form></div></section>
 <section id="screen-question" class="screen" aria-labelledby="q-title"><div class="progress-wrap"><div class="progress-meta"><span id="q-counter">Pergunta 1 de 5</span><span id="q-percent">20%</span></div><div class="track" role="progressbar" id="progressbar" aria-valuemin="0" aria-valuemax="5" aria-valuenow="1" aria-label="Progresso do questionário"><div class="bar" id="progress-bar"></div></div></div><div class="card"><p class="dimension" id="q-dimension"></p><h2 id="q-title"></h2><div class="options" id="q-options"></div><div class="btn-row"><button type="button" class="btn btn-ghost" id="btn-back">Voltar</button></div></div></section>
 <section id="screen-result" class="screen" aria-labelledby="result-title"><div class="card"><div class="rule"></div><div id="result-content"><span class="badge" id="result-badge"></span><h2 id="result-title">Seu resultado</h2><p class="score"><span id="result-score">0</span><small> / 15 pontos</small></p><p class="diagnosis" id="result-diagnosis"></p></div><div class="completion-panel" id="completion-panel" hidden><span class="completion-mark" aria-hidden="true">✓</span><h2>Obrigada pela sua resposta.</h2><p>Microsoft e Kyndryl agradecem pela sua participação.</p><p>Entraremos em contato para apresentar seu report de prontidão agêntica.</p></div><p class="status" id="submit-status" role="status" aria-live="polite"></p></div></section>
