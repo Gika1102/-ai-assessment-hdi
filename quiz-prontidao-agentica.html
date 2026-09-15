@@ -67,6 +67,23 @@
 	.tester-reset { display: none; margin-left: auto; border: 0; background: transparent; color: var(--text-soft); cursor: pointer; font: inherit; font-size: .72rem; text-decoration: underline; }
 	.tester-reset.is-visible { display: inline-block; }
 	.tester-reset:hover, .tester-reset:focus-visible { color: var(--kyndryl); }
+	main { max-width: 760px; padding: 18px 20px 14px; }
+	.card { padding: 24px 28px; }
+	h1 { font-size: clamp(1.45rem, 3.5vw, 2rem); margin-bottom: 10px; }
+	.subtitle { margin-bottom: 18px; font-size: .92rem; }
+	.rule { margin-bottom: 14px; }
+	.form-grid { gap: 10px 14px; }
+	.field { gap: 4px; }
+	.field input { min-height: 42px; padding: 9px 12px; }
+	.optin { margin-block: 14px 4px; }
+	.btn-row { margin-block-start: 16px; }
+	.btn { min-height: 44px; padding: 10px 24px; }
+	.site-footer { margin-top: 12px; padding: 10px 0 0; border-block-start: 1px solid var(--border); font-size: .72rem; }
+	@media (max-width: 620px) {
+		main { padding: 14px 12px 10px; }
+		.card { padding: 20px 18px; }
+		.site-footer { margin-top: 10px; }
+	}
 </style>
 </head>
 <body>
@@ -75,8 +92,8 @@
 <section id="screen-welcome" class="screen active" aria-labelledby="welcome-title"><div class="card"><div class="rule"></div><h1 id="welcome-title">Sua empresa está pronta para ser uma organização agêntica?</h1><p class="subtitle">5 perguntas · 2 minutos · diagnóstico de prontidão agêntica</p><form id="lead-form" novalidate><div class="form-grid"><div class="field"><label for="f-nome">Nome <span class="req" aria-hidden="true">*</span></label><input type="text" id="f-nome" name="nome" autocomplete="name" required></div><div class="field"><label for="f-empresa">Empresa <span class="req" aria-hidden="true">*</span></label><input type="text" id="f-empresa" name="empresa" autocomplete="organization" required></div><div class="field"><label for="f-cargo">Cargo <span class="req" aria-hidden="true">*</span></label><input type="text" id="f-cargo" name="cargo" autocomplete="organization-title" required></div><div class="field"><label for="f-email">E-mail <span class="req" aria-hidden="true">*</span></label><input type="email" id="f-email" name="email" autocomplete="email" required></div></div><label class="optin" for="f-optin"><input type="checkbox" id="f-optin" name="optin" checked><span>Aceito receber o material de follow-up</span></label><p class="error-msg" id="form-error" role="alert"></p><div class="btn-row"><button type="submit" class="btn btn-primary">Começar</button></div></form></div></section>
 <section id="screen-question" class="screen" aria-labelledby="q-title"><div class="progress-wrap"><div class="progress-meta"><span id="q-counter">Pergunta 1 de 5</span><span id="q-percent">20%</span></div><div class="track" role="progressbar" id="progressbar" aria-valuemin="0" aria-valuemax="5" aria-valuenow="1" aria-label="Progresso do questionário"><div class="bar" id="progress-bar"></div></div></div><div class="card"><p class="dimension" id="q-dimension"></p><h2 id="q-title"></h2><div class="options" id="q-options"></div><div class="btn-row"><button type="button" class="btn btn-ghost" id="btn-back">Voltar</button></div></div></section>
 <section id="screen-result" class="screen" aria-labelledby="result-title"><div class="card"><div class="rule"></div><div id="result-content"><span class="badge" id="result-badge"></span><h2 id="result-title">Seu resultado</h2><p class="score"><span id="result-score">0</span><small> / 15 pontos</small></p><p class="diagnosis" id="result-diagnosis"></p><div class="gargalos"><h3>Onde estão seus gargalos</h3><div id="result-gargalos"></div></div></div><div class="completion-panel" id="completion-panel" hidden><span class="completion-mark" aria-hidden="true">✓</span><p class="completion-kicker">Resposta recebida</p><h2>Obrigada pela sua resposta.</h2><p>Microsoft e Kyndryl agradecem pela sua participação.</p><p>Entraremos em contato para apresentar seu report de prontidão agêntica.</p></div><p class="status" id="submit-status" role="status" aria-live="polite"></p></div></section>
-</main>
 <footer class="site-footer"><span>Microsoft + Kyndryl · Diagnóstico de prontidão agêntica</span><button type="button" class="tester-reset" id="btn-tester-reset">Voltar ao início (teste)</button></footer>
+</main>
 <script>
 (function(){"use strict";
 var ENDPOINT="https://assesment-ai-hdi.dihsantos2502.workers.dev/submit",STORAGE_KEY="quizRespostas",COMPLETED_KEY="quizConcluido",TESTER_EMAIL="seu.nome@empresa.com",el=function(id){return document.getElementById(id)},PERGUNTAS=[
@@ -99,8 +116,8 @@ el("btn-back").addEventListener("click",function(){if(indice>0){indice--;renderP
 function nivelDe(total){return NIVEIS.find(function(n){return total<=n.max})||NIVEIS[2]}
 function finalizar(){var total=respostas.reduce(function(s,r){return s+r.pontos},0),nivel=nivelDe(total),gargalos=respostas.map(function(r,i){return{i:i,pontos:r.pontos}}).sort(function(a,b){return a.pontos-b.pontos||a.i-b.i}).slice(0,2);el("result-score").textContent=String(total);el("result-badge").textContent=nivel.nome;el("result-diagnosis").textContent=nivel.texto;var wrap=el("result-gargalos");wrap.textContent="";gargalos.forEach(function(g){var div=document.createElement("div"),h=document.createElement("p"),s=document.createElement("p");div.className="gargalo";h.className="g-dim";s.className="g-step";h.textContent=PERGUNTAS[g.i].dimensao;s.textContent="Próximo passo: "+PERGUNTAS[g.i].proximoPasso;div.append(h,s);wrap.appendChild(div)});var registro={id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),timestamp:new Date().toISOString(),answers:{name:lead.nome,company:lead.empresa,role:lead.cargo,email:lead.email,optin:lead.optin,total:total,level:nivel.nome,answers:respostas.map(function(r){return r.pontos})}};salvar(registro);enviar(registro)}
 async function enviar(registro){enviando=true;mostrar("result");el("result-content").hidden=true;el("completion-panel").hidden=true;el("submit-status").textContent="Registrando sua resposta...";try{var result=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(registro)});var payload=await result.json().catch(function(){return{}});if(!result.ok)throw new Error(payload.error||"Falha no envio");localStorage.setItem(COMPLETED_KEY,"true");mostrarConclusao()}catch(error){console.error(error);el("result-content").hidden=false;el("result-badge").textContent="Não foi possível concluir";el("result-title").textContent="Tente novamente mais tarde";el("result-diagnosis").textContent="Sua resposta ficou salva neste dispositivo, mas não conseguimos registrá-la agora.";el("submit-status").textContent="Erro no envio: "+error.message}finally{enviando=false}}
-function resetarTeste(){localStorage.removeItem(COMPLETED_KEY);localStorage.removeItem(STORAGE_KEY);lead=null;respostas=[];indice=0;enviando=false;el("lead-form").reset();el("result-content").hidden=false;el("completion-panel").hidden=true;el("submit-status").textContent="";el("btn-tester-reset").classList.remove("is-visible");mostrar("welcome");el("f-nome").focus({preventScroll:true})}
-function mostrarConclusao(){mostrar("result");el("result-content").hidden=true;el("completion-panel").hidden=false;el("submit-status").textContent=""}
+function resetarTeste(){localStorage.removeItem(COMPLETED_KEY);localStorage.removeItem(STORAGE_KEY);lead=null;respostas=[];indice=0;enviando=false;el("lead-form").reset();el("result-content").hidden=false;el("result-gargalos").parentNode.hidden=false;el("completion-panel").hidden=true;el("submit-status").textContent="";el("btn-tester-reset").classList.remove("is-visible");mostrar("welcome");el("f-nome").focus({preventScroll:true})}
+function mostrarConclusao(){mostrar("result");el("result-content").hidden=false;el("result-gargalos").parentNode.hidden=true;el("completion-panel").hidden=false;el("submit-status").textContent=""}
 el("btn-tester-reset").addEventListener("click",resetarTeste);if(localStorage.getItem(COMPLETED_KEY)==="true"){mostrarConclusao()}}
 )();
 </script>
