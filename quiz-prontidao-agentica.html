@@ -66,8 +66,8 @@
 	.tester-reset { display: none; margin-left: auto; border: 0; background: transparent; color: var(--text-soft); cursor: pointer; font: inherit; font-size: .72rem; text-decoration: underline; }
 	.tester-reset.is-visible { display: inline-block; }
 	.tester-reset:hover, .tester-reset:focus-visible { color: var(--kyndryl); }
-	main { max-width: 760px; padding: 0 0 10px; }
-	.card { padding: 24px 28px; }
+	main { max-width: 760px; padding: 0 0 0; }
+	.card { padding: 18px 24px; }
 	.page-layout { display: grid; grid-template-columns: 158px minmax(0, 760px); gap: 22px; align-items: start; width: auto; max-width: calc(100% - 75px); margin: 16px 0 10px 75px; flex: 1 0 auto; }
 	h1 { font-size: clamp(1.45rem, 3.5vw, 2rem); margin-bottom: 10px; }
 	.subtitle { margin-bottom: 18px; font-size: .92rem; }
@@ -89,15 +89,16 @@
 	.qr-aside { position: sticky; top: 18px; margin-left: 0; padding-top: 0; color: var(--text-soft); text-align: left; }
 	.qr-aside img { display: block; width: 158px; height: 158px; margin: 0 0 10px; border: 8px solid #fff; border-radius: 10px; box-shadow: var(--shadow); object-fit: contain; }
 	.qr-aside p { margin: 0; font-size: .72rem; line-height: 1.35; text-align: center; }
-	#screen-result .card { padding: 28px 36px; }
+	#screen-result .card { padding: 20px 24px; }
 	#result-content { display: flex; flex-direction: column; align-items: center; text-align: center; }
-	#result-content .score { order: 1; margin: 0 0 26px; font-size: clamp(4rem, 12vw, 5.5rem); }
-	#result-content .badge { order: 2; margin: 0 auto 14px; }
-	#result-content h2 { order: 3; margin: 0 0 18px; }
-	#result-content .diagnosis { order: 4; margin: 0; color: var(--text-soft); max-width: 560px; }
-	.completion-panel { margin-top: 26px; padding: 26px 0 4px; border-top: 1px solid var(--border); }
-	.completion-mark { width: 52px; height: 52px; margin-bottom: 14px; font-size: 1.6rem; }
-	.completion-panel h2 { font-size: clamp(1.35rem, 3vw, 1.8rem); }
+	#result-content .score { order: 1; margin: 0 0 12px; font-size: clamp(2.8rem, 8vw, 3.8rem); }
+	#result-content .badge { order: 2; margin: 0 auto 8px; }
+	#result-content h2 { order: 3; margin: 0 0 10px; font-size: 1.4rem; }
+	#result-content .diagnosis { order: 4; margin: 0; color: var(--text-soft); max-width: 560px; font-size: 0.95rem; }
+	.completion-panel { margin-top: 12px; padding: 12px 0 0; border-top: 1px solid var(--border); }
+	.completion-mark { width: 40px; height: 40px; margin-bottom: 8px; font-size: 1.3rem; }
+	.completion-panel h2 { font-size: 1.1rem; margin: 0 0 6px; }
+	.completion-panel p { font-size: 0.9rem; }
 	@media (max-width: 620px) {
 		#screen-result .card { padding: 24px 20px; }
 		#result-content { column-gap: 14px; }
