@@ -68,6 +68,7 @@
 	.tester-reset:hover, .tester-reset:focus-visible { color: var(--kyndryl); }
 	main { max-width: 760px; padding: 18px 20px 14px; }
 	.card { padding: 24px 28px; }
+	.page-layout { display: grid; grid-template-columns: 158px minmax(0, 760px); gap: 22px; align-items: start; width: min(100% - 48px, 940px); margin: 16px auto 10px; }
 	h1 { font-size: clamp(1.45rem, 3.5vw, 2rem); margin-bottom: 10px; }
 	.subtitle { margin-bottom: 18px; font-size: .92rem; }
 	.rule { margin-bottom: 14px; }
@@ -85,10 +86,10 @@
 	.site-footer::after { right: -6%; bottom: 18px; border-color: rgba(255, 70, 45, .14); transform: rotate(-10deg); }
 	.site-footer > * { position: relative; z-index: 1; }
 	.brand-photo { display: block; width: 175px; height: auto; margin: 10px 0 14px; object-fit: contain; }
-	.qr-aside { position: sticky; top: 24px; padding-top: 18px; color: var(--text-soft); text-align: left; }
+	.qr-aside { position: sticky; top: 18px; margin-left: 8px; padding-top: 0; color: var(--text-soft); text-align: left; }
 	.qr-aside img { display: block; width: 158px; height: 158px; margin: 0 0 10px; border: 8px solid #fff; border-radius: 10px; box-shadow: var(--shadow); object-fit: contain; }
 	.qr-aside p { margin: 0; font-size: .72rem; line-height: 1.35; }
-	@media (max-width: 860px) { .page-layout { display: block; width: min(100% - 24px, 760px); } .qr-aside { display: none; } }
+	@media (max-width: 860px) { .page-layout { display: block; width: min(100% - 24px, 760px); margin-top: 12px; } .qr-aside { display: none; } }
 	#screen-result .card { padding: 28px 36px; }
 	#result-content { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 24px; }
 	#result-content .badge { grid-column: 1; grid-row: 1; justify-self: start; margin: 0 0 10px; }
@@ -104,7 +105,7 @@
 		#result-content .score { font-size: 3rem; }
 	}
 	@media (max-width: 620px) {
-		main { padding: 14px 12px 10px; }
+		main { padding: 0 12px 10px; }
 		.card { padding: 20px 18px; }
 		.site-footer { min-height: 42px; padding: 8px 12px; }
 		.brand-photo { width: 155px; }
