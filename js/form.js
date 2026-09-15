@@ -1,5 +1,3 @@
-import { decryptObject, encryptObject, normalizeEncryptedData } from "./crypto.js";
-
 const SUBMIT_ENDPOINT = "https://assesment-ai-hdi.dihsantos2502.workers.dev/submit";
 const STORAGE_KEY = "hdi_feedback_draft_v1";
 const PENDING_KEY = "hdi_feedback_pending_v1";
@@ -16,25 +14,6 @@ const progressBar = document.getElementById("progressBar");
 const stepLabel = document.getElementById("stepLabel");
 const characterCount = document.getElementById("characterCount");
 let currentStep = Number(localStorage.getItem(`${STORAGE_KEY}_step`) || 1);
-let runtimePassphrase = null;
-
-function getPassphrase() {
-  if (runtimePassphrase) return runtimePassphrase;
-
-  const configured = window.__ASSESSMENT_PASSPHRASE__;
-  if (configured && String(configured).trim()) {
-    runtimePassphrase = String(configured).trim();
-    return runtimePassphrase;
-  }
-
-  const entered = window.prompt("Informe a frase secreta para criptografar e salvar este formulário:", "");
-  if (!entered || !String(entered).trim()) {
-    throw new Error("Frase secreta obrigatória para salvar os dados com criptografia.");
-  }
-
-  runtimePassphrase = String(entered).trim();
-  return runtimePassphrase;
-}
 let isSubmitting = false;
 let hasStarted = false;
 
@@ -95,11 +74,7 @@ async function readDraft() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return {};
 
-    const parsed = JSON.parse(raw);
-    const encrypted = normalizeEncryptedData(parsed);
-    if (!encrypted) return parsed;
-
-    return await decryptObject(encrypted, getPassphrase());
+    return JSON.parse(raw);
   } catch {
     return {};
   }
@@ -107,12 +82,11 @@ async function readDraft() {
 async function saveDraft() {
   try {
     const values = getAllFormValues();
-    const encrypted = await encryptObject(values, getPassphrase());
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(encrypted));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
     localStorage.setItem(`${STORAGE_KEY}_step`, String(currentStep));
   } catch (error) {
     console.error(error);
-    setStatus("Frase secreta não informada. Defina a chave antes de salvar os dados criptografados.", "error");
+    setStatus("Não foi possível salvar o rascunho local.", "error");
   }
 }
 async function fillDraft() {
@@ -150,13 +124,7 @@ function validateStep() {
 }
 function makeId() { return crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`; }
 async function savePending(response) {
-  try {
-    const encrypted = await encryptObject(response, getPassphrase());
-    localStorage.setItem(PENDING_KEY, JSON.stringify(encrypted));
-  } catch (error) {
-    console.error(error);
-    throw new Error("Não foi possível salvar os dados criptografados sem a chave secreta.");
-  }
+  localStorage.setItem(PENDING_KEY, JSON.stringify(response));
 }
 function clearLocalBackup() { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(`${STORAGE_KEY}_step`); localStorage.removeItem(PENDING_KEY); }
 
@@ -187,7 +155,8 @@ if (form) {
   form.addEventListener("submit", async event => {
     event.preventDefault(); if (isSubmitting || !validateStep()) return;
     const formData = getAllFormValues(); delete formData.consent;
-    const response = { id: makeId(), timestamp: new Date().toISOString(), answers: formData }; await savePending(response); isSubmitting = true;
+    const response = { id: makeId(), timestamp: new Date().toISOString(), answers: formData };
+    await savePending(response); isSubmitting = true;
     if (submitButton) submitButton.disabled = true;
     if (nextButton) nextButton.disabled = true;
     if (backButton) backButton.disabled = true;
@@ -204,7 +173,7 @@ if (form) {
       if (!result.ok) {
         throw new Error(payload.error || `HTTP ${result.status}`);
       }
-      form.reset(); currentStep = 1; showStep(1); clearLocalBackup(); if (characterCount) characterCount.textContent = "0 / 2000"; setStatus("Sua avaliação foi enviada com sucesso. O time da Kyndryl vai entrar em contato.", "success");
+      form.reset(); currentStep = 1; showStep(1); clearLocalBackup(); if (characterCount) characterCount.textContent = "0 / 2000"; setStatus("Sua avaliação foi salva com sucesso.", "success");
     } catch (error) { console.error(error); setStatus("Não foi possível enviar agora. Sua resposta ficou salva neste aparelho; tente novamente quando a conexão estiver estável.", "error"); }
     finally { isSubmitting = false; if (submitButton) submitButton.disabled = false; if (nextButton) nextButton.disabled = false; if (backButton) backButton.disabled = false; }
   });

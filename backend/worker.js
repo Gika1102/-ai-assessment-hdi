@@ -1,22 +1,13 @@
 /**
- * Cloudflare Worker - recebe o POST do formulário e envia por e-mail via Resend.
+ * Cloudflare Worker - grava respostas em texto claro no GitHub Contents API.
  *
- * Configuração via Secrets/Variables do Worker:
- *   RESEND_API_KEY = chave da API do Resend
- *   EMAIL_FROM = remetente verificado pelo Resend, ex.: "Formulário <no-reply@seu-dominio.com>"
- *   EMAIL_TO = e-mail de destino, ex.: "seu-email@gmail.com"
- *   EMAIL_SUBJECT = assunto do e-mail (opcional)
- *   ALLOWED_ORIGIN = origem exata do GitHub Pages, ex.: https://usuario.github.io
+ * Secrets/Variables obrigatórias:
+ *   GITHUB_TOKEN = token fine-grained com Contents: Read and write no repositório de respostas
+ *   RESPONSES_GITHUB_OWNER = proprietário do repositório de respostas
+ *   RESPONSES_GITHUB_REPO = nome do repositório de respostas
+ *   RESPONSES_GITHUB_BRANCH = branch de gravação, ex.: main
+ *   ALLOWED_ORIGIN = origem exata do frontend
  */
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/\"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
 
 function corsHeaders(origin, allowedOrigin) {
   const allowed = allowedOrigin === "*" || origin === allowedOrigin;
@@ -26,6 +17,13 @@ function corsHeaders(origin, allowedOrigin) {
     "Access-Control-Allow-Headers": "Content-Type",
     "Vary": "Origin"
   };
+}
+
+function base64EncodeUtf8(value) {
+  const bytes = new TextEncoder().encode(value);
+  let binary = "";
+  bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+  return btoa(binary);
 }
 
 export default {
@@ -57,69 +55,35 @@ export default {
     }
 
     const safeId = String(body.id).match(/^[0-9a-f-]{20,80}$/i)?.[0];
-    const answers = body.answers;
 
-    if (!safeId || !String(answers.name || "").trim() || !String(answers.email || "").trim()) {
+    if (!safeId || !String(body.answers.name || "").trim() || !String(body.answers.email || "").trim()) {
       return Response.json({ error: "Invalid payload" }, { status: 400, headers });
     }
 
-    const subject = env.EMAIL_SUBJECT || "Nova resposta do formulário";
-    const toEmail = env.EMAIL_TO;
-    const fromEmail = env.EMAIL_FROM;
-
-    if (!env.RESEND_API_KEY || !toEmail || !fromEmail) {
-      return Response.json({ error: "Missing email configuration" }, { status: 500, headers });
+    if (!env.GITHUB_TOKEN || !env.RESPONSES_GITHUB_OWNER || !env.RESPONSES_GITHUB_REPO || !env.RESPONSES_GITHUB_BRANCH) {
+      return Response.json({ error: "Missing GitHub configuration" }, { status: 500, headers });
     }
 
-    const rows = [
-      ["Nome", answers.name],
-      ["E-mail", answers.email],
-      ["Empresa", answers.company || "-"],
-      ["Interesse", answers.interest || "-"],
-      ["Nível", answers.level || "-"],
-      ["Comentário", answers.comment || "-"]
-    ];
-
-    const html = `
-      <div style="font-family: Arial, sans-serif; color: #111827; max-width: 640px; margin: 0 auto;">
-        <h2 style="margin-bottom: 16px;">Nova resposta do formulário</h2>
-        <p style="margin: 0 0 20px; color: #374151;">Recebemos uma nova submissão com os dados abaixo.</p>
-
-        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-          ${rows.map(([label, value]) => `
-            <tr>
-              <td style="padding: 10px 12px; border: 1px solid #e5e7eb; background: #f9fafb; width: 140px; font-weight: bold;">${escapeHtml(label)}</td>
-              <td style="padding: 10px 12px; border: 1px solid #e5e7eb;">${escapeHtml(value)}</td>
-            </tr>
-          `).join("")}
-        </table>
-
-        <p style="margin-top: 24px; color: #6b7280; font-size: 12px;">
-          Enviado em: ${escapeHtml(String(body.timestamp))} <br />
-          ID: ${escapeHtml(safeId)}
-        </p>
-      </div>
-    `;
-
-    const resendResponse = await fetch("https://api.resend.com/emails", {
-      method: "POST",
+    const path = `${env.GITHUB_DATA_PATH || "data/responses"}/${safeId}.json`;
+    const githubResponse = await fetch(`https://api.github.com/repos/${encodeURIComponent(env.RESPONSES_GITHUB_OWNER)}/${encodeURIComponent(env.RESPONSES_GITHUB_REPO)}/contents/${path}`, {
+      method: "PUT",
       headers: {
-        "Authorization": `Bearer ${env.RESEND_API_KEY}`,
-        "Content-Type": "application/json"
+        "Authorization": `Bearer ${env.GITHUB_TOKEN}`,
+        "Accept": "application/vnd.github+json",
+        "Content-Type": "application/json",
+        "User-Agent": "hdi-feedback-worker"
       },
       body: JSON.stringify({
-        from: fromEmail,
-        to: [toEmail],
-        reply_to: String(answers.email),
-        subject,
-        html
+        message: `Assessment response ${safeId}`,
+        content: base64EncodeUtf8(JSON.stringify(body, null, 2)),
+        branch: env.RESPONSES_GITHUB_BRANCH
       })
     });
 
-    if (!resendResponse.ok) {
-      const details = await resendResponse.text();
-      console.error("Resend error:", details);
-      return Response.json({ error: "Could not send email" }, { status: 502, headers });
+    if (!githubResponse.ok) {
+      const details = await githubResponse.text();
+      console.error("GitHub error:", details);
+      return Response.json({ error: "Could not save response" }, { status: 502, headers });
     }
 
     return Response.json({ ok: true, id: safeId }, { status: 201, headers });
