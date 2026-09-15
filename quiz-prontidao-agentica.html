@@ -79,10 +79,33 @@
 	.btn-row { margin-block-start: 16px; }
 	.btn { min-height: 44px; padding: 10px 24px; }
 	.site-footer { margin-top: 12px; padding: 10px 0 0; border-block-start: 1px solid var(--border); font-size: .72rem; }
+	.site-footer { position: relative; min-height: 46px; margin: 0; overflow: hidden; padding: 10px clamp(18px, 4vw, 48px); border-block-start: 1px solid var(--border); background: var(--surface); isolation: isolate; }
+	.site-footer::before,
+	.site-footer::after { position: absolute; z-index: -1; width: 38%; height: 90px; border: 1px solid rgba(0, 169, 157, .16); border-radius: 50%; content: ""; pointer-events: none; transform: rotate(7deg); }
+	.site-footer::before { top: 22px; left: 34%; box-shadow: 0 0 0 10px rgba(0, 169, 157, .035), 0 0 0 20px rgba(255, 70, 45, .03); }
+	.site-footer::after { right: -6%; bottom: 18px; border-color: rgba(255, 70, 45, .14); transform: rotate(-10deg); }
+	.site-footer > * { position: relative; z-index: 1; }
+	#screen-result .card { padding: 28px 36px; }
+	#result-content { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 24px; }
+	#result-content .badge { grid-column: 1; grid-row: 1; justify-self: start; margin: 0 0 10px; }
+	#result-content h2 { grid-column: 1; grid-row: 2; margin: 0; }
+	#result-content .score { grid-column: 2; grid-row: 1 / span 2; margin: 0; font-size: clamp(3rem, 7vw, 4.5rem); }
+	#result-content .diagnosis { grid-column: 1 / -1; margin: 18px 0 0; color: var(--text-soft); }
+	#result-content .gargalos { grid-column: 1 / -1; }
+	.completion-panel { margin-top: 26px; padding: 26px 0 4px; border-top: 1px solid var(--border); }
+	.completion-mark { width: 52px; height: 52px; margin-bottom: 14px; font-size: 1.6rem; }
+	.completion-panel h2 { font-size: clamp(1.35rem, 3vw, 1.8rem); }
+	@media (max-width: 620px) {
+		#screen-result .card { padding: 24px 20px; }
+		#result-content { column-gap: 14px; }
+		#result-content .score { font-size: 3rem; }
+	}
 	@media (max-width: 620px) {
 		main { padding: 14px 12px 10px; }
 		.card { padding: 20px 18px; }
-		.site-footer { margin-top: 10px; }
+		.site-footer { min-height: 42px; padding: 8px 12px; }
+		.site-footer::before { left: 8%; width: 70%; }
+		.site-footer::after { right: -32%; width: 68%; }
 	}
 </style>
 </head>
@@ -92,8 +115,8 @@
 <section id="screen-welcome" class="screen active" aria-labelledby="welcome-title"><div class="card"><div class="rule"></div><h1 id="welcome-title">Sua empresa está pronta para ser uma organização agêntica?</h1><p class="subtitle">5 perguntas · 2 minutos · diagnóstico de prontidão agêntica</p><form id="lead-form" novalidate><div class="form-grid"><div class="field"><label for="f-nome">Nome <span class="req" aria-hidden="true">*</span></label><input type="text" id="f-nome" name="nome" autocomplete="name" required></div><div class="field"><label for="f-empresa">Empresa <span class="req" aria-hidden="true">*</span></label><input type="text" id="f-empresa" name="empresa" autocomplete="organization" required></div><div class="field"><label for="f-cargo">Cargo <span class="req" aria-hidden="true">*</span></label><input type="text" id="f-cargo" name="cargo" autocomplete="organization-title" required></div><div class="field"><label for="f-email">E-mail <span class="req" aria-hidden="true">*</span></label><input type="email" id="f-email" name="email" autocomplete="email" required></div></div><label class="optin" for="f-optin"><input type="checkbox" id="f-optin" name="optin" checked><span>Aceito receber o material de follow-up</span></label><p class="error-msg" id="form-error" role="alert"></p><div class="btn-row"><button type="submit" class="btn btn-primary">Começar</button></div></form></div></section>
 <section id="screen-question" class="screen" aria-labelledby="q-title"><div class="progress-wrap"><div class="progress-meta"><span id="q-counter">Pergunta 1 de 5</span><span id="q-percent">20%</span></div><div class="track" role="progressbar" id="progressbar" aria-valuemin="0" aria-valuemax="5" aria-valuenow="1" aria-label="Progresso do questionário"><div class="bar" id="progress-bar"></div></div></div><div class="card"><p class="dimension" id="q-dimension"></p><h2 id="q-title"></h2><div class="options" id="q-options"></div><div class="btn-row"><button type="button" class="btn btn-ghost" id="btn-back">Voltar</button></div></div></section>
 <section id="screen-result" class="screen" aria-labelledby="result-title"><div class="card"><div class="rule"></div><div id="result-content"><span class="badge" id="result-badge"></span><h2 id="result-title">Seu resultado</h2><p class="score"><span id="result-score">0</span><small> / 15 pontos</small></p><p class="diagnosis" id="result-diagnosis"></p><div class="gargalos"><h3>Onde estão seus gargalos</h3><div id="result-gargalos"></div></div></div><div class="completion-panel" id="completion-panel" hidden><span class="completion-mark" aria-hidden="true">✓</span><p class="completion-kicker">Resposta recebida</p><h2>Obrigada pela sua resposta.</h2><p>Microsoft e Kyndryl agradecem pela sua participação.</p><p>Entraremos em contato para apresentar seu report de prontidão agêntica.</p></div><p class="status" id="submit-status" role="status" aria-live="polite"></p></div></section>
-<footer class="site-footer"><span>Microsoft + Kyndryl · Diagnóstico de prontidão agêntica</span><button type="button" class="tester-reset" id="btn-tester-reset">Voltar ao início (teste)</button></footer>
 </main>
+<footer class="site-footer"><span>Microsoft + Kyndryl · Diagnóstico de prontidão agêntica</span><button type="button" class="tester-reset" id="btn-tester-reset">Voltar ao início (teste)</button></footer>
 <script>
 (function(){"use strict";
 var ENDPOINT="https://assesment-ai-hdi.dihsantos2502.workers.dev/submit",STORAGE_KEY="quizRespostas",COMPLETED_KEY="quizConcluido",TESTER_EMAIL="seu.nome@empresa.com",el=function(id){return document.getElementById(id)},PERGUNTAS=[
